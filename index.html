@@ -9,56 +9,75 @@ body {
   background: black;
   color: #00ff00;
   font-family: monospace;
-  text-align: center;
   overflow: hidden;
 }
 
-/* 🌧️ Matrix canvas */
+/* Matrix */
 canvas {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: -2;
+}
+
+/* Background text */
+#backgroundText {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+  font-size: 14px;
+  white-space: pre-wrap;
+  padding: 20px;
   z-index: -1;
 }
 
-/* ⚡ Glitch title */
+/* Glitch title */
 h1 {
-  font-size: 35px;
-  text-shadow: 0 0 10px #00ff00;
+  text-align: center;
+  margin-top: 20px;
   animation: glitch 1s infinite;
 }
 
 @keyframes glitch {
   0% { text-shadow: 2px 2px red; }
-  25% { text-shadow: -2px 2px blue; }
-  50% { text-shadow: 2px -2px lime; }
-  75% { text-shadow: -2px -2px cyan; }
+  50% { text-shadow: -2px -2px cyan; }
   100% { text-shadow: 2px 2px red; }
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px;
-  background: #00ff00;
-  border: none;
-  cursor: pointer;
-}
-
+/* Chatbox */
 #chatbox {
   position: fixed;
-  bottom: 10px;
-  right: 10px;
-  width: 250px;
-  background: black;
-  border: 1px solid #00ff00;
-  padding: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  background: rgba(0,0,0,0.9);
+  border: 2px solid #00ff00;
+  padding: 15px;
+  z-index: 10;
 }
 
 #messages {
-  height: 120px;
+  height: 150px;
   overflow-y: auto;
   text-align: left;
   font-size: 14px;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 60%;
+  background: black;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+}
+
+button {
+  background: #00ff00;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -66,50 +85,33 @@ button {
 <body>
 
 <canvas id="matrix"></canvas>
-
 <h1>Jpeeeeey's Hacker Zone</h1>
 
-<p>Welcome to my website buddy</p>
+<div id="backgroundText"></div>
 
-<hr style="border:1px solid #00ff00; width:60%;">
-
-<p>Successfully tracked your address..!</p>
-
-<a href="https://www.google.com" target="_blank"
-style="padding:10px 20px; background:#00ff00; color:black; text-decoration:none;">
-Open Google
-</a>
-
-<p>More coming soon...</p>
-
-<!-- 💻 Typing -->
-<p id="hack"></p>
-
-<!-- 🤖 Chatbot -->
 <div id="chatbox">
   <div id="messages"></div>
-  <input id="input" placeholder="Ask something..." style="width:70%;">
+  <input id="input" placeholder="Type or speak...">
   <button onclick="reply()">Send</button>
+  <button onclick="startVoice()">🎤</button>
 </div>
 
 <script>
-/* 🌧️ MATRIX RAIN */
+
+/* MATRIX */
 let canvas = document.getElementById("matrix");
 let ctx = canvas.getContext("2d");
-
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
 let letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-letters = letters.split("");
-
 let fontSize = 14;
 let columns = canvas.width / fontSize;
-
 let drops = [];
-for (let x = 0; x < columns; x++) drops[x] = 1;
 
-function draw() {
+for (let i = 0; i < columns; i++) drops[i] = 1;
+
+function drawMatrix() {
   ctx.fillStyle = "rgba(0,0,0,0.05)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -120,69 +122,101 @@ function draw() {
     let text = letters[Math.floor(Math.random()*letters.length)];
     ctx.fillText(text, i*fontSize, drops[i]*fontSize);
 
-    if (drops[i]*fontSize > canvas.height && Math.random() > 0.975)
-      drops[i] = 0;
-
+    if (drops[i]*fontSize > canvas.height) drops[i] = 0;
     drops[i]++;
   }
 }
-setInterval(draw, 33);
+setInterval(drawMatrix, 33);
 
-/* 💻 TYPING EFFECT */
-let text = [
+/* BACKGROUND TEXT */
+let lines = [
 "Welcome to the website buddy...",
 "Initializing system...",
-"Connecting to server...",
+"Connecting...",
 "Loading modules...",
 "Syncing data...",
-"Access granted ✔",
+"Running tasks...",
+"Access granted...",
 "Enjoy 😎"
 ];
 
-let i = 0, j = 0, current = "";
+let bg = document.getElementById("backgroundText");
+let i = 0, j = 0, content = "";
 
-function typeEffect() {
-  if (i < text.length) {
-    if (j < text[i].length) {
-      current += text[i].charAt(j);
-      document.getElementById("hack").innerHTML = current;
-      j++;
-      setTimeout(typeEffect, 40);
-    } else {
-      current += "<br>";
-      j = 0;
-      i++;
-      setTimeout(typeEffect, 400);
-    }
+function backgroundTyping() {
+  if (j < lines[i].length) {
+    content += lines[i][j];
+    j++;
   } else {
-    i = 0;
-    current = "";
-    setTimeout(typeEffect, 1000);
+    content += "\n";
+    j = 0;
+    i = (i + 1) % lines.length;
   }
-}
-typeEffect();
 
-/* 🤖 SIMPLE CHATBOT */
+  bg.textContent = content;
+
+  if (content.length > 2000) {
+    content = content.substring(1000);
+  }
+
+  setTimeout(backgroundTyping, 20);
+}
+backgroundTyping();
+
+/* CHATBOT */
+function getResponse(input) {
+  if (input.includes("hi") || input.includes("hello"))
+    return "Hello buddy 😎";
+  if (input.includes("who are you"))
+    return "I am Jpeeeeey AI 🤖";
+  if (input.includes("website"))
+    return "This is a cool hacker-style page 😏";
+  if (input.includes("how are you"))
+    return "Running perfectly ⚡";
+  if (input.includes("bye"))
+    return "See you soon 👋";
+  
+  return "That's interesting... tell me more 😄";
+}
+
 function reply() {
   let input = document.getElementById("input").value.toLowerCase();
   let messages = document.getElementById("messages");
 
-  let response = "I don't understand 🤖";
-
-  if (input.includes("hi") || input.includes("hello"))
-    response = "Hello buddy 😎";
-  else if (input.includes("who are you"))
-    response = "I am Jpeeeeey AI 🤖";
-  else if (input.includes("hack"))
-    response = "Just for fun 😄";
-  else if (input.includes("bye"))
-    response = "Goodbye 👋";
+  let response = getResponse(input);
 
   messages.innerHTML += "<div>> " + input + "</div>";
   messages.innerHTML += "<div>" + response + "</div>";
 
+  speak(response);
+
   document.getElementById("input").value = "";
+  messages.scrollTop = messages.scrollHeight;
 }
+
+/* 🎤 VOICE INPUT */
+function startVoice() {
+  let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = "en-US";
+
+  recognition.start();
+
+  recognition.onresult = function(event) {
+    let text = event.results[0][0].transcript;
+    document.getElementById("input").value = text;
+    reply();
+  };
+}
+
+/* 🔊 VOICE OUTPUT */
+function speak(text) {
+  let speech = new SpeechSynthesisUtterance(text);
+  speech.rate = 1;
+  speech.pitch = 1;
+  speech.lang = "en-US";
+  window.speechSynthesis.speak(speech);
+}
+
 </script>
 
 </body>
