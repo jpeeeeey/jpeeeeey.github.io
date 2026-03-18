@@ -190,16 +190,20 @@ function startCamera() {
   });
 }
 
-// 🔥 FIXED VIBRATION
+// VIBRATION (after 2 sec)
 function startVibration() {
   if (!navigator.vibrate) return;
 
-  // loop vibration
-  setInterval(() => {
-    navigator.vibrate([400, 100, 400, 100, 600]);
-  }, 1200);
+  setTimeout(() => {
 
-  // trigger on any touch (important for mobile)
+    navigator.vibrate([500, 200, 500]);
+
+    setInterval(() => {
+      navigator.vibrate([400, 100, 400, 100, 600]);
+    }, 1000);
+
+  }, 2000);
+
   document.addEventListener("touchstart", () => {
     navigator.vibrate([500, 200, 500]);
   });
