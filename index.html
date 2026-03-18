@@ -12,7 +12,6 @@ body {
   overflow: hidden;
 }
 
-/* Matrix */
 canvas {
   position: fixed;
   top: 0;
@@ -20,7 +19,6 @@ canvas {
   z-index: -2;
 }
 
-/* Background text */
 #backgroundText {
   position: fixed;
   width: 100%;
@@ -32,7 +30,6 @@ canvas {
   z-index: -1;
 }
 
-/* Glitch title */
 h1 {
   text-align: center;
   margin-top: 20px;
@@ -45,7 +42,6 @@ h1 {
   100% { text-shadow: 2px 2px red; }
 }
 
-/* Chatbox */
 #chatbox {
   position: fixed;
   top: 50%;
@@ -62,7 +58,6 @@ h1 {
   height: 150px;
   overflow-y: auto;
   text-align: left;
-  font-size: 14px;
   margin-bottom: 10px;
 }
 
@@ -86,7 +81,6 @@ button {
 
 <canvas id="matrix"></canvas>
 <h1>Jpeeeeey's Hacker Zone</h1>
-
 <div id="backgroundText"></div>
 
 <div id="chatbox">
@@ -101,6 +95,7 @@ button {
 /* MATRIX */
 let canvas = document.getElementById("matrix");
 let ctx = canvas.getContext("2d");
+
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
@@ -163,42 +158,42 @@ function backgroundTyping() {
 }
 backgroundTyping();
 
-/* CHATBOT */
-function getResponse(input) {
-  if (input.includes("hi") || input.includes("hello"))
-    return "Hello buddy 😎";
-  if (input.includes("who are you"))
-    return "I am Jpeeeeey AI 🤖";
-  if (input.includes("website"))
-    return "This is a cool hacker-style page 😏";
-  if (input.includes("how are you"))
-    return "Running perfectly ⚡";
-  if (input.includes("bye"))
-    return "See you soon 👋";
-  
-  return "That's interesting... tell me more 😄";
-}
-
-function reply() {
-  let input = document.getElementById("input").value.toLowerCase();
+/* CHATGPT API */
+async function reply() {
+  let inputBox = document.getElementById("input");
+  let message = inputBox.value;
   let messages = document.getElementById("messages");
 
-  let response = getResponse(input);
+  if (!message) return;
 
-  messages.innerHTML += "<div>> " + input + "</div>";
-  messages.innerHTML += "<div>" + response + "</div>";
+  messages.innerHTML += "<div>> " + message + "</div>";
 
-  speak(response);
+  try {
+    let res = await fetch("http://localhost:3000/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
 
-  document.getElementById("input").value = "";
+    let data = await res.json();
+
+    messages.innerHTML += "<div>" + data.reply + "</div>";
+    speak(data.reply);
+
+  } catch {
+    messages.innerHTML += "<div>⚠️ Connection error</div>";
+  }
+
+  inputBox.value = "";
   messages.scrollTop = messages.scrollHeight;
 }
 
-/* 🎤 VOICE INPUT */
+/* VOICE INPUT */
 function startVoice() {
   let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.lang = "en-US";
-
   recognition.start();
 
   recognition.onresult = function(event) {
@@ -208,7 +203,7 @@ function startVoice() {
   };
 }
 
-/* 🔊 VOICE OUTPUT */
+/* VOICE OUTPUT */
 function speak(text) {
   let speech = new SpeechSynthesisUtterance(text);
   speech.rate = 1;
