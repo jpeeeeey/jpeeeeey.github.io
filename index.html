@@ -13,6 +13,7 @@ body {
   overflow: hidden;
 }
 
+/* MATRIX */
 canvas {
   position: fixed;
   top: 0;
@@ -20,6 +21,7 @@ canvas {
   z-index: -1;
 }
 
+/* CURSOR */
 .cursor {
   display: inline-block;
   width: 10px;
@@ -32,6 +34,7 @@ canvas {
   50% { opacity: 0; }
 }
 
+/* LOADING BAR */
 #bar {
   width: 0%;
   height: 10px;
@@ -39,9 +42,25 @@ canvas {
   margin: 20px auto;
 }
 
-#loginBox {
+/* 🚨 ALERT SCREEN */
+#alertBox {
   display: none;
-  margin-top: 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: red;
+  font-size: 30px;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: flash 0.5s infinite;
+}
+
+@keyframes flash {
+  50% { background: red; color: black; }
 }
 
 video, canvas {
@@ -60,23 +79,18 @@ video, canvas {
 Jpeeeeey's Hacker Zone
 </h1>
 
-<p>Welcome to my website 😎</p>
-
 <div id="bar"></div>
 
 <p id="hack"></p><span class="cursor"></span>
 
-<!-- 🔐 Password -->
-<div id="loginBox">
-  <p>🔐 Enter Password:</p>
-  <input type="password" id="pass">
-  <button onclick="checkPass()">Enter</button>
-  <p id="result"></p>
+<!-- 🚨 ALERT -->
+<div id="alertBox">
+⚠️ SYSTEM BREACH DETECTED ⚠️
 </div>
 
-<!-- 📸 Camera -->
+<!-- CAMERA -->
 <video id="video" width="300" autoplay></video><br>
-<button onclick="takePhoto()">📸 Capture Photo</button><br>
+<button onclick="takePhoto()">📸 Capture</button><br>
 <canvas id="canvas" width="300"></canvas>
 
 <script>
@@ -112,7 +126,7 @@ function draw() {
     drops[i]++;
   }
 }
-setInterval(draw, 33);
+setInterval(draw, 25);
 
 // ===== LOADING =====
 let width = 0;
@@ -121,43 +135,57 @@ let bar = document.getElementById("bar");
 let load = setInterval(() => {
   if (width >= 100) {
     clearInterval(load);
-    document.getElementById("loginBox").style.display = "block";
     startCamera();
+
+    // 🚨 trigger alert after loading
+    setTimeout(() => {
+      document.getElementById("alertBox").style.display = "flex";
+    }, 2000);
+
   } else {
     width++;
     bar.style.width = width + "%";
   }
-}, 30);
+}, 10);
 
-// ===== TYPING LOOP =====
+// ===== ULTRA GLITCH TYPING =====
 let text = [
-"Initializing system...",
-"Connecting to secure server...",
-"Bypassing firewall...",
-"Decrypting data...",
-"Accessing device...",
-"Locating IP address...",
-"IP found: 192.168.0." + Math.floor(Math.random()*255),
-"Scanning files...",
-"Uploading data...",
-"Accessing camera...",
-"Downloading private data...",
-"System breach detected...",
-"Sending logs...",
-"Almost done...",
-"Relax 😂 nothing happened"
+"INITIALIZING SYSTEM...",
+"ACCESSING DATABASE...",
+"DECRYPTING FILES...",
+"TRACKING IP...",
+"UPLOADING DATA...",
+"SYSTEM BREACH...",
+"ACCESSING CAMERA...",
+"DOWNLOADING FILES...",
+"ERROR ERROR ERROR...",
+"JUST KIDDING 😂"
 ];
 
+let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
 let i = 0;
 let j = 0;
 let currentText = "";
 
+function glitchChar() {
+  return chars[Math.floor(Math.random() * chars.length)];
+}
+
 function typeEffect() {
   if (j < text[i].length) {
-    currentText += text[i].charAt(j);
-    document.getElementById("hack").innerHTML = currentText;
-    j++;
-    setTimeout(typeEffect, 40);
+
+    // glitch effect
+    let glitch = glitchChar();
+    document.getElementById("hack").innerHTML =
+      currentText + glitch;
+
+    setTimeout(() => {
+      currentText += text[i].charAt(j);
+      document.getElementById("hack").innerHTML = currentText;
+      j++;
+      setTimeout(typeEffect, 10); // ⚡ ultra fast
+    }, 5);
+
   } else {
     currentText += "<br>";
     j = 0;
@@ -167,7 +195,7 @@ function typeEffect() {
       i = Math.floor(Math.random() * text.length);
     }
 
-    setTimeout(typeEffect, 400);
+    setTimeout(typeEffect, 50);
   }
 }
 typeEffect();
@@ -175,18 +203,7 @@ typeEffect();
 // auto scroll
 setInterval(() => {
   window.scrollTo(0, document.body.scrollHeight);
-}, 500);
-
-// ===== PASSWORD =====
-function checkPass() {
-  let p = document.getElementById("pass").value;
-
-  if (p === "1234") {
-    document.getElementById("result").innerHTML = "Access Granted ✅";
-  } else {
-    document.getElementById("result").innerHTML = "System Locked ❌<br>Sending data...";
-  }
-}
+}, 200);
 
 // ===== CAMERA =====
 function startCamera() {
@@ -201,19 +218,16 @@ function startCamera() {
 
 // ===== CAPTURE =====
 function takePhoto() {
-  document.getElementById("hack").innerHTML += "<br>Capturing image...";
-
   let video = document.getElementById("video");
   let canvas = document.getElementById("canvas");
   let ctx = canvas.getContext("2d");
 
-  setTimeout(() => {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    document.getElementById("hack").innerHTML += "<br>Image captured ✔";
-  }, 1500);
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  document.getElementById("hack").innerHTML += "<br>IMAGE CAPTURED ✔";
 }
 
 </script>
 
 </body>
-  </html>
+</html>
