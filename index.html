@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Jpeeeeey's System</title>
+<title>Jpeeeeey's Website</title>
 
 <style>
 body {
@@ -9,9 +9,11 @@ body {
   background: black;
   color: #00ff00;
   font-family: monospace;
+  text-align: center;
   overflow: hidden;
 }
 
+/* 🌧️ Matrix canvas */
 canvas {
   position: fixed;
   top: 0;
@@ -19,240 +21,168 @@ canvas {
   z-index: -1;
 }
 
+/* ⚡ Glitch title */
 h1 {
-  text-align: center;
   font-size: 35px;
   text-shadow: 0 0 10px #00ff00;
+  animation: glitch 1s infinite;
 }
 
-#hack {
-  padding: 20px;
-  font-size: 18px;
+@keyframes glitch {
+  0% { text-shadow: 2px 2px red; }
+  25% { text-shadow: -2px 2px blue; }
+  50% { text-shadow: 2px -2px lime; }
+  75% { text-shadow: -2px -2px cyan; }
+  100% { text-shadow: 2px 2px red; }
 }
 
-#cameraBox {
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #00ff00;
+  border: none;
+  cursor: pointer;
+}
+
+#chatbox {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  border: 2px solid #00ff00;
-}
-
-#faceBox {
-  position: absolute;
-  border: 2px solid red;
-  display: none;
-}
-
-#rec {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  color: red;
-  font-weight: bold;
-  display: none;
-}
-
-.popup {
-  position: fixed;
-  background: red;
-  color: white;
+  width: 250px;
+  background: black;
+  border: 1px solid #00ff00;
   padding: 10px;
+}
+
+#messages {
+  height: 120px;
+  overflow-y: auto;
+  text-align: left;
   font-size: 14px;
-  z-index: 999;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Jpeeeeey's System</h1>
-
 <canvas id="matrix"></canvas>
 
-<div id="hack"></div>
+<h1>Jpeeeeey's Hacker Zone</h1>
 
-<div id="cameraBox">
-  <div id="rec">🔴 REC</div>
-  <video id="video" width="250" autoplay></video>
-  <div id="faceBox"></div>
+<p>Welcome to my website buddy</p>
+
+<hr style="border:1px solid #00ff00; width:60%;">
+
+<p>Successfully tracked your address..!</p>
+
+<a href="https://www.google.com" target="_blank"
+style="padding:10px 20px; background:#00ff00; color:black; text-decoration:none;">
+Open Google
+</a>
+
+<p>More coming soon...</p>
+
+<!-- 💻 Typing -->
+<p id="hack"></p>
+
+<!-- 🤖 Chatbot -->
+<div id="chatbox">
+  <div id="messages"></div>
+  <input id="input" placeholder="Ask something..." style="width:70%;">
+  <button onclick="reply()">Send</button>
 </div>
 
 <script>
+/* 🌧️ MATRIX RAIN */
+let canvas = document.getElementById("matrix");
+let ctx = canvas.getContext("2d");
 
-// AUTO START
-window.onload = () => {
-  startHack();
-};
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
 
-// START
-function startHack() {
-  document.documentElement.requestFullscreen();
+let letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+letters = letters.split("");
 
-  startMatrix();
-  typeEffect();
-  startCamera();
-  startVibration();
-  spamPopups();
-  freezeScreen();
+let fontSize = 14;
+let columns = canvas.width / fontSize;
+
+let drops = [];
+for (let x = 0; x < columns; x++) drops[x] = 1;
+
+function draw() {
+  ctx.fillStyle = "rgba(0,0,0,0.05)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#0F0";
+  ctx.font = fontSize + "px monospace";
+
+  for (let i = 0; i < drops.length; i++) {
+    let text = letters[Math.floor(Math.random()*letters.length)];
+    ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+
+    if (drops[i]*fontSize > canvas.height && Math.random() > 0.975)
+      drops[i] = 0;
+
+    drops[i]++;
+  }
 }
+setInterval(draw, 33);
 
-// MATRIX
-function startMatrix() {
-  let canvas = document.getElementById("matrix");
-  let ctx = canvas.getContext("2d");
-
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
-
-  let letters = "01";
-  let fontSize = 14;
-  let columns = canvas.width / fontSize;
-
-  let drops = [];
-  for (let x = 0; x < columns; x++) drops[x] = 1;
-
-  setInterval(() => {
-    ctx.fillStyle = "rgba(0,0,0,0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#00ff00";
-    ctx.font = fontSize + "px monospace";
-
-    for (let i = 0; i < drops.length; i++) {
-      let text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height) drops[i] = 0;
-      drops[i]++;
-    }
-  }, 25);
-}
-
-// GLITCH TEXT
-let lines = [
+/* 💻 TYPING EFFECT */
+let text = [
+"Welcome to the website buddy...",
 "Initializing system...",
-"Tracking device...",
-"Accessing camera...",
-"Face detected...",
-"Recording started...",
-"Uploading data...",
-"System compromised..."
+"Connecting to server...",
+"Loading modules...",
+"Syncing data...",
+"Access granted ✔",
+"Enjoy 😎"
 ];
 
 let i = 0, j = 0, current = "";
-let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%";
-
-function glitch() {
-  return chars[Math.floor(Math.random()*chars.length)];
-}
 
 function typeEffect() {
-  if (j < lines[i].length) {
-    document.getElementById("hack").innerHTML = current + glitch();
-
-    setTimeout(() => {
-      current += lines[i][j];
+  if (i < text.length) {
+    if (j < text[i].length) {
+      current += text[i].charAt(j);
       document.getElementById("hack").innerHTML = current;
       j++;
-      setTimeout(typeEffect, 10);
-    }, 5);
+      setTimeout(typeEffect, 40);
+    } else {
+      current += "<br>";
+      j = 0;
+      i++;
+      setTimeout(typeEffect, 400);
+    }
   } else {
-    current += "<br>";
-    j = 0;
-    i++;
-    if (i >= lines.length) i = 0;
-    setTimeout(typeEffect, 50);
+    i = 0;
+    current = "";
+    setTimeout(typeEffect, 1000);
   }
 }
+typeEffect();
 
-// CAMERA
-function startCamera() {
-  navigator.mediaDevices.getUserMedia({ video: true })
-  .then(stream => {
-    let video = document.getElementById("video");
-    video.srcObject = stream;
+/* 🤖 SIMPLE CHATBOT */
+function reply() {
+  let input = document.getElementById("input").value.toLowerCase();
+  let messages = document.getElementById("messages");
 
-    document.getElementById("rec").style.display = "block";
+  let response = "I don't understand 🤖";
 
-    let box = document.getElementById("faceBox");
-    box.style.display = "block";
+  if (input.includes("hi") || input.includes("hello"))
+    response = "Hello buddy 😎";
+  else if (input.includes("who are you"))
+    response = "I am Jpeeeeey AI 🤖";
+  else if (input.includes("hack"))
+    response = "Just for fun 😄";
+  else if (input.includes("bye"))
+    response = "Goodbye 👋";
 
-    setInterval(() => {
-      box.style.width = "100px";
-      box.style.height = "100px";
-      box.style.top = Math.random() * 150 + "px";
-      box.style.left = Math.random() * 150 + "px";
-    }, 500);
+  messages.innerHTML += "<div>> " + input + "</div>";
+  messages.innerHTML += "<div>" + response + "</div>";
 
-  })
-  .catch(() => {
-    document.getElementById("hack").innerHTML += "<br>Camera denied";
-  });
+  document.getElementById("input").value = "";
 }
-
-// VIBRATION (after 2 sec)
-function startVibration() {
-  if (!navigator.vibrate) return;
-
-  setTimeout(() => {
-
-    navigator.vibrate([500, 200, 500]);
-
-    setInterval(() => {
-      navigator.vibrate([400, 100, 400, 100, 600]);
-    }, 1000);
-
-  }, 2000);
-
-  document.addEventListener("touchstart", () => {
-    navigator.vibrate([500, 200, 500]);
-  });
-}
-
-// POPUPS
-function spamPopups() {
-  setInterval(() => {
-    let popup = document.createElement("div");
-    popup.className = "popup";
-    popup.innerText = "⚠️ VIRUS DETECTED";
-
-    popup.style.top = Math.random()*90 + "%";
-    popup.style.left = Math.random()*90 + "%";
-
-    document.body.appendChild(popup);
-
-    setTimeout(()=> popup.remove(), 1500);
-  }, 400);
-}
-
-// FREEZE
-function freezeScreen() {
-  let lock = document.createElement("div");
-  lock.innerHTML = "⚠️ SYSTEM LOCKED ⚠️";
-
-  lock.style.position = "fixed";
-  lock.style.top = "0";
-  lock.style.left = "0";
-  lock.style.width = "100%";
-  lock.style.height = "100%";
-  lock.style.background = "rgba(0,0,0,0.3)";
-  lock.style.color = "red";
-  lock.style.display = "flex";
-  lock.style.justifyContent = "center";
-  lock.style.alignItems = "center";
-  lock.style.fontSize = "30px";
-  lock.style.zIndex = "99999";
-
-  document.body.appendChild(lock);
-
-  document.addEventListener("touchstart", e => e.preventDefault(), { passive:false });
-  document.addEventListener("click", e => e.preventDefault());
-
-  setTimeout(() => {
-    location.reload();
-  }, 120000);
-}
-
 </script>
 
 </body>
