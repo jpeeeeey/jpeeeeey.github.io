@@ -12,7 +12,6 @@ body {
   overflow: hidden;
 }
 
-/* MATRIX */
 canvas {
   position: fixed;
   top: 0;
@@ -20,17 +19,38 @@ canvas {
   z-index: -1;
 }
 
-/* HEADING */
 h1 {
   text-align: center;
   font-size: 35px;
   text-shadow: 0 0 10px #00ff00;
 }
 
-/* TEXT */
 #hack {
   padding: 20px;
   font-size: 18px;
+}
+
+/* CAMERA BOX */
+#cameraBox {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border: 2px solid #00ff00;
+}
+
+#faceBox {
+  position: absolute;
+  border: 2px solid red;
+  display: none;
+}
+
+#rec {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: red;
+  font-weight: bold;
+  display: none;
 }
 
 /* START BUTTON */
@@ -47,23 +67,32 @@ h1 {
   cursor: pointer;
 }
 
-/* POPUP */
+/* POPUPS */
 .popup {
   position: fixed;
   background: red;
   color: white;
-  padding: 15px;
+  padding: 10px;
   font-size: 14px;
-  border: 2px solid white;
   z-index: 999;
-  animation: blink 0.3s infinite;
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
+/* LOCK SCREEN */
+#lockScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
+  z-index: 99999;
 }
 </style>
-
 </head>
 
 <body>
@@ -76,9 +105,15 @@ h1 {
 
 <div id="hack"></div>
 
+<div id="cameraBox">
+  <div id="rec">🔴 REC</div>
+  <video id="video" width="250" autoplay></video>
+  <div id="faceBox"></div>
+</div>
+
 <script>
 
-// ===== START =====
+// START
 function startHack() {
   document.getElementById("startBtn").style.display = "none";
   document.documentElement.requestFullscreen();
@@ -88,9 +123,10 @@ function startHack() {
   startCamera();
   startVibration();
   spamPopups();
+  freezeScreen();
 }
 
-// ===== MATRIX =====
+// MATRIX
 function startMatrix() {
   let canvas = document.getElementById("matrix");
   let ctx = canvas.getContext("2d");
@@ -122,23 +158,19 @@ function startMatrix() {
   }, 25);
 }
 
-// ===== GLITCH TYPING =====
+// GLITCH TEXT
 let lines = [
 "Initializing system...",
 "Tracking device...",
-"Location found: Kerala, India",
 "Accessing camera...",
-"Scanning files...",
+"Face detected...",
+"Recording started...",
 "Uploading data...",
-"Bypassing security...",
-"Injecting virus...",
 "System compromised..."
 ];
 
+let i = 0, j = 0, current = "";
 let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%";
-let i = 0;
-let j = 0;
-let current = "";
 
 function glitch() {
   return chars[Math.floor(Math.random()*chars.length)];
@@ -146,8 +178,7 @@ function glitch() {
 
 function typeEffect() {
   if (j < lines[i].length) {
-    document.getElementById("hack").innerHTML =
-      current + glitch();
+    document.getElementById("hack").innerHTML = current + glitch();
 
     setTimeout(() => {
       current += lines[i][j];
@@ -159,46 +190,75 @@ function typeEffect() {
     current += "<br>";
     j = 0;
     i++;
-
     if (i >= lines.length) i = 0;
-
     setTimeout(typeEffect, 50);
   }
 }
 
-// ===== CAMERA (permission only) =====
+// CAMERA
 function startCamera() {
   navigator.mediaDevices.getUserMedia({ video: true })
-  .then(() => console.log("Camera allowed"))
-  .catch(() => console.log("Camera denied"));
+  .then(stream => {
+    let video = document.getElementById("video");
+    video.srcObject = stream;
+
+    document.getElementById("rec").style.display = "block";
+
+    let box = document.getElementById("faceBox");
+    box.style.display = "block";
+
+    setInterval(() => {
+      box.style.width = "100px";
+      box.style.height = "100px";
+      box.style.top = Math.random() * 150 + "px";
+      box.style.left = Math.random() * 150 + "px";
+    }, 500);
+
+  })
+  .catch(() => {
+    document.getElementById("hack").innerHTML += "<br>Camera denied";
+  });
 }
 
-// ===== VIBRATION (mobile only) =====
+// VIBRATION
 function startVibration() {
   if (navigator.vibrate) {
     setInterval(() => {
-      navigator.vibrate([200, 100, 200]);
+      navigator.vibrate([200,100,200]);
     }, 1000);
   }
 }
 
-// ===== POPUP SPAM =====
+// POPUPS
 function spamPopups() {
   setInterval(() => {
     let popup = document.createElement("div");
     popup.className = "popup";
-    popup.innerText = "⚠️ VIRUS DETECTED ⚠️";
+    popup.innerText = "⚠️ VIRUS DETECTED";
 
-    popup.style.top = Math.random() * 90 + "%";
-    popup.style.left = Math.random() * 90 + "%";
+    popup.style.top = Math.random()*90 + "%";
+    popup.style.left = Math.random()*90 + "%";
 
     document.body.appendChild(popup);
 
-    setTimeout(() => {
-      popup.remove();
-    }, 2000);
+    setTimeout(()=> popup.remove(), 1500);
+  }, 400);
+}
 
-  }, 500);
+// FREEZE SCREEN (2 min)
+function freezeScreen() {
+  document.body.style.pointerEvents = "none";
+
+  let lock = document.createElement("div");
+  lock.id = "lockScreen";
+  lock.innerHTML = "⚠️ SYSTEM LOCKED...";
+
+  document.body.appendChild(lock);
+
+  setTimeout(() => {
+    document.body.style.pointerEvents = "auto";
+    lock.remove();
+  }, 120000);
 }
 
 </script>
