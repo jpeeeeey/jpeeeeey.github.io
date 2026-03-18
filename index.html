@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>My Website</title>
+<title>Jpeeeeey's Website</title>
 </head>
 
-<body style="background:black;
-color:#00ff00; text-align:center;
-font-family:monospace; font-size:18px;
-line-height:1.6;">
+<body style="background:black; color:#00ff00; text-align:center; font-family:monospace; font-size:18px; line-height:1.6;">
 
-<h1 style="font-size:35px;">
+<h1 style="font-size:35px; text-shadow:0 0 10px #00ff00;">
 Jpeeeeey's Hacker Zone
 </h1>
 
-<p style="font-size:20px;">
-Welcome to my website buddy
-</p>
+<p style="font-size:20px;">Welcome to my website buddy</p>
 
 <hr style="border:1px solid #00ff00; width:60%;">
 
@@ -26,7 +21,49 @@ style="font-size:20px; padding:10px 20px; background:#00ff00; color:black; text-
 Open Google
 </a>
 
-<p>More coming soon...</p>
+<p style="margin-top:20px;">More coming soon...</p>
+
+<!-- 😈 Hacker typing effect -->
+<p id="hack" style="margin-top:30px;"></p>
+
+<script>
+let text = [
+"Initializing system...",
+"Bypassing firewall...",
+"Accessing device...",
+"Tracking IP address...",
+"Downloading data...",
+"Access granted ✔",
+"Just kidding 😎"
+];
+
+let i = 0;
+let j = 0;
+let currentText = "";
+let speed = 50;
+
+function typeEffect() {
+  if (i < text.length) {
+    if (j < text[i].length) {
+      currentText += text[i].charAt(j);
+      document.getElementById("hack").innerHTML = currentText;
+      j++;
+      setTimeout(typeEffect, speed);
+    } else {
+      currentText += "<br>";
+      j = 0;
+      i++;
+      setTimeout(typeEffect, 500);
+    }
+  } else {
+    i = 0;
+    currentText = "";
+    setTimeout(typeEffect, 1000);
+  }
+}
+
+typeEffect();
+</script>
 
 </body>
 </html>
