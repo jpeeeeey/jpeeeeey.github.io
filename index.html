@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Jpeeeeey's Hacker Zone</title>
+<title>System Access</title>
 
 <style>
 body {
@@ -9,7 +9,6 @@ body {
   background: black;
   color: #00ff00;
   font-family: monospace;
-  text-align: center;
   overflow: hidden;
 }
 
@@ -21,30 +20,24 @@ canvas {
   z-index: -1;
 }
 
-/* CURSOR */
-.cursor {
-  display: inline-block;
-  width: 10px;
-  background: #00ff00;
-  margin-left: 5px;
-  animation: blink 1s infinite;
+/* TEXT */
+#hack {
+  padding: 20px;
+  font-size: 18px;
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
-/* LOADING BAR */
-#bar {
-  width: 0%;
-  height: 10px;
-  background: #00ff00;
-  margin: 20px auto;
-}
-
-video, canvas {
-  margin-top: 15px;
+/* START BUTTON */
+#startBtn {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px 25px;
+  font-size: 18px;
+  background: black;
+  color: #00ff00;
   border: 2px solid #00ff00;
+  cursor: pointer;
 }
 </style>
 
@@ -52,146 +45,110 @@ video, canvas {
 
 <body>
 
+<button id="startBtn" onclick="startHack()">CLICK TO CONTINUE</button>
+
 <canvas id="matrix"></canvas>
 
-<h1 style="font-size:35px; text-shadow:0 0 10px #00ff00;">
-Jpeeeeey's Hacker Zone
-</h1>
-
-<div id="bar"></div>
-
-<p id="hack"></p><span class="cursor"></span>
-
-<!-- CAMERA -->
-<video id="video" width="300" autoplay></video><br>
-<button onclick="takePhoto()">📸 Capture</button><br>
-<canvas id="canvas" width="300"></canvas>
+<div id="hack"></div>
 
 <script>
 
-// ===== MATRIX =====
-let canvas = document.getElementById("matrix");
-let ctx = canvas.getContext("2d");
+// ===== START =====
+function startHack() {
+  document.getElementById("startBtn").style.display = "none";
+  document.documentElement.requestFullscreen();
 
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
-
-let letters = "01".split("");
-let fontSize = 14;
-let columns = canvas.width / fontSize;
-
-let drops = [];
-for (let x = 0; x < columns; x++) drops[x] = 1;
-
-function draw() {
-  ctx.fillStyle = "rgba(0,0,0,0.05)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "#00ff00";
-  ctx.font = fontSize + "px monospace";
-
-  for (let i = 0; i < drops.length; i++) {
-    let text = letters[Math.floor(Math.random() * letters.length)];
-    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
-      drops[i] = 0;
-
-    drops[i]++;
-  }
+  startMatrix();
+  typeEffect();
+  startCamera();
 }
-setInterval(draw, 25);
 
-// ===== LOADING =====
-let width = 0;
-let bar = document.getElementById("bar");
+// ===== MATRIX =====
+function startMatrix() {
+  let canvas = document.getElementById("matrix");
+  let ctx = canvas.getContext("2d");
 
-let load = setInterval(() => {
-  if (width >= 100) {
-    clearInterval(load);
-    startCamera();
-  } else {
-    width++;
-    bar.style.width = width + "%";
-  }
-}, 10);
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+
+  let letters = "01";
+  let fontSize = 14;
+  let columns = canvas.width / fontSize;
+
+  let drops = [];
+  for (let x = 0; x < columns; x++) drops[x] = 1;
+
+  setInterval(() => {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff00";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      let text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height) drops[i] = 0;
+      drops[i]++;
+    }
+  }, 25);
+}
 
 // ===== ULTRA GLITCH TYPING =====
-let text = [
-"INITIALIZING SYSTEM...",
-"ACCESSING DATABASE...",
-"DECRYPTING FILES...",
-"TRACKING IP...",
-"UPLOADING DATA...",
-"SYSTEM BREACH...",
-"ACCESSING CAMERA...",
-"DOWNLOADING FILES...",
-"ERROR ERROR ERROR...",
-"RELAX 😂 NOTHING HAPPENED"
+let lines = [
+"Initializing system...",
+"Connecting to satellite...",
+"Tracking device location...",
+"Location found: Kerala, India",
+"Accessing front camera...",
+"Scanning personal files...",
+"Uploading data to server...",
+"Bypassing security...",
+"Injecting payload...",
+"System override complete..."
 ];
 
-let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%";
 let i = 0;
 let j = 0;
-let currentText = "";
+let current = "";
 
-function glitchChar() {
-  return chars[Math.floor(Math.random() * chars.length)];
+function glitch() {
+  return chars[Math.floor(Math.random()*chars.length)];
 }
 
 function typeEffect() {
-  if (j < text[i].length) {
-
-    let glitch = glitchChar();
+  if (j < lines[i].length) {
     document.getElementById("hack").innerHTML =
-      currentText + glitch;
+      current + glitch();
 
     setTimeout(() => {
-      currentText += text[i].charAt(j);
-      document.getElementById("hack").innerHTML = currentText;
+      current += lines[i][j];
+      document.getElementById("hack").innerHTML = current;
       j++;
-      setTimeout(typeEffect, 10); // ultra fast
+      setTimeout(typeEffect, 10);
     }, 5);
-
   } else {
-    currentText += "<br>";
+    current += "<br>";
     j = 0;
     i++;
 
-    if (i >= text.length) {
-      i = Math.floor(Math.random() * text.length);
-    }
+    if (i >= lines.length) i = 0;
 
     setTimeout(typeEffect, 50);
   }
 }
-typeEffect();
 
-// auto scroll
-setInterval(() => {
-  window.scrollTo(0, document.body.scrollHeight);
-}, 200);
-
-// ===== CAMERA =====
+// ===== CAMERA (permission only) =====
 function startCamera() {
   navigator.mediaDevices.getUserMedia({ video: true })
   .then(stream => {
-    document.getElementById("video").srcObject = stream;
+    console.log("Camera access granted");
   })
   .catch(() => {
     console.log("Camera denied");
   });
-}
-
-// ===== CAPTURE =====
-function takePhoto() {
-  let video = document.getElementById("video");
-  let canvas = document.getElementById("canvas");
-  let ctx = canvas.getContext("2d");
-
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  document.getElementById("hack").innerHTML += "<br>IMAGE CAPTURED ✔";
 }
 
 </script>
