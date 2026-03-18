@@ -30,7 +30,6 @@ h1 {
   font-size: 18px;
 }
 
-/* CAMERA */
 #cameraBox {
   position: fixed;
   bottom: 10px;
@@ -53,7 +52,6 @@ h1 {
   display: none;
 }
 
-/* POPUP */
 .popup {
   position: fixed;
   background: red;
@@ -95,7 +93,7 @@ function startHack() {
   startCamera();
   startVibration();
   spamPopups();
-  freezeScreen(); // instant lock
+  freezeScreen();
 }
 
 // MATRIX
@@ -192,13 +190,19 @@ function startCamera() {
   });
 }
 
-// VIBRATION
+// 🔥 FIXED VIBRATION
 function startVibration() {
-  if (navigator.vibrate) {
-    setInterval(() => {
-      navigator.vibrate([200,100,200]);
-    }, 1000);
-  }
+  if (!navigator.vibrate) return;
+
+  // loop vibration
+  setInterval(() => {
+    navigator.vibrate([400, 100, 400, 100, 600]);
+  }, 1200);
+
+  // trigger on any touch (important for mobile)
+  document.addEventListener("touchstart", () => {
+    navigator.vibrate([500, 200, 500]);
+  });
 }
 
 // POPUPS
@@ -217,10 +221,8 @@ function spamPopups() {
   }, 400);
 }
 
-// FREEZE (instant, transparent)
+// FREEZE
 function freezeScreen() {
-  document.body.style.pointerEvents = "none";
-
   let lock = document.createElement("div");
   lock.innerHTML = "⚠️ SYSTEM LOCKED ⚠️";
 
@@ -239,9 +241,11 @@ function freezeScreen() {
 
   document.body.appendChild(lock);
 
+  document.addEventListener("touchstart", e => e.preventDefault(), { passive:false });
+  document.addEventListener("click", e => e.preventDefault());
+
   setTimeout(() => {
-    document.body.style.pointerEvents = "auto";
-    lock.remove();
+    location.reload();
   }, 120000);
 }
 
