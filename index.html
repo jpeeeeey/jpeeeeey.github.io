@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>System Access</title>
+<title>Jpeeeeey's System</title>
 
 <style>
 body {
@@ -18,6 +18,13 @@ canvas {
   top: 0;
   left: 0;
   z-index: -1;
+}
+
+/* HEADING */
+h1 {
+  text-align: center;
+  font-size: 35px;
+  text-shadow: 0 0 10px #00ff00;
 }
 
 /* TEXT */
@@ -39,6 +46,22 @@ canvas {
   border: 2px solid #00ff00;
   cursor: pointer;
 }
+
+/* POPUP */
+.popup {
+  position: fixed;
+  background: red;
+  color: white;
+  padding: 15px;
+  font-size: 14px;
+  border: 2px solid white;
+  z-index: 999;
+  animation: blink 0.3s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
 </style>
 
 </head>
@@ -46,6 +69,8 @@ canvas {
 <body>
 
 <button id="startBtn" onclick="startHack()">CLICK TO CONTINUE</button>
+
+<h1>Jpeeeeey's System</h1>
 
 <canvas id="matrix"></canvas>
 
@@ -61,6 +86,8 @@ function startHack() {
   startMatrix();
   typeEffect();
   startCamera();
+  startVibration();
+  spamPopups();
 }
 
 // ===== MATRIX =====
@@ -95,18 +122,17 @@ function startMatrix() {
   }, 25);
 }
 
-// ===== ULTRA GLITCH TYPING =====
+// ===== GLITCH TYPING =====
 let lines = [
 "Initializing system...",
-"Connecting to satellite...",
-"Tracking device location...",
+"Tracking device...",
 "Location found: Kerala, India",
-"Accessing front camera...",
-"Scanning personal files...",
-"Uploading data to server...",
+"Accessing camera...",
+"Scanning files...",
+"Uploading data...",
 "Bypassing security...",
-"Injecting payload...",
-"System override complete..."
+"Injecting virus...",
+"System compromised..."
 ];
 
 let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%";
@@ -143,12 +169,36 @@ function typeEffect() {
 // ===== CAMERA (permission only) =====
 function startCamera() {
   navigator.mediaDevices.getUserMedia({ video: true })
-  .then(stream => {
-    console.log("Camera access granted");
-  })
-  .catch(() => {
-    console.log("Camera denied");
-  });
+  .then(() => console.log("Camera allowed"))
+  .catch(() => console.log("Camera denied"));
+}
+
+// ===== VIBRATION (mobile only) =====
+function startVibration() {
+  if (navigator.vibrate) {
+    setInterval(() => {
+      navigator.vibrate([200, 100, 200]);
+    }, 1000);
+  }
+}
+
+// ===== POPUP SPAM =====
+function spamPopups() {
+  setInterval(() => {
+    let popup = document.createElement("div");
+    popup.className = "popup";
+    popup.innerText = "⚠️ VIRUS DETECTED ⚠️";
+
+    popup.style.top = Math.random() * 90 + "%";
+    popup.style.left = Math.random() * 90 + "%";
+
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+      popup.remove();
+    }, 2000);
+
+  }, 500);
 }
 
 </script>
