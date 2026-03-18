@@ -1,12 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Jpeeeeey's Hacker Zone</title>
+
+<style>
+body {
+  margin: 0;
+  background: black;
+  color: #00ff00;
+  font-family: monospace;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* MATRIX */
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+/* CURSOR */
+.cursor {
+  display: inline-block;
+  width: 10px;
+  background: #00ff00;
+  margin-left: 5px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* LOADING BAR */
+#bar {
+  width: 0%;
+  height: 10px;
+  background: #00ff00;
+  margin: 20px auto;
+}
+
+video, canvas {
+  margin-top: 15px;
+  border: 2px solid #00ff00;
+}
+</style>
+
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<h1 style="font-size:35px; text-shadow:0 0 10px #00ff00;">
+Jpeeeeey's Hacker Zone
+</h1>
 
 <div id="bar"></div>
 
 <p id="hack"></p><span class="cursor"></span>
-
-<!-- 🚨 ALERT -->
-<div id="alertBox">
-⚠️ SYSTEM BREACH DETECTED ⚠️
-</div>
 
 <!-- CAMERA -->
 <video id="video" width="300" autoplay></video><br>
@@ -56,12 +110,6 @@ let load = setInterval(() => {
   if (width >= 100) {
     clearInterval(load);
     startCamera();
-
-    // 🚨 trigger alert after loading
-    setTimeout(() => {
-      document.getElementById("alertBox").style.display = "flex";
-    }, 2000);
-
   } else {
     width++;
     bar.style.width = width + "%";
@@ -79,7 +127,7 @@ let text = [
 "ACCESSING CAMERA...",
 "DOWNLOADING FILES...",
 "ERROR ERROR ERROR...",
-"JUST KIDDING 😂"
+"RELAX 😂 NOTHING HAPPENED"
 ];
 
 let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
@@ -94,7 +142,6 @@ function glitchChar() {
 function typeEffect() {
   if (j < text[i].length) {
 
-    // glitch effect
     let glitch = glitchChar();
     document.getElementById("hack").innerHTML =
       currentText + glitch;
@@ -103,7 +150,7 @@ function typeEffect() {
       currentText += text[i].charAt(j);
       document.getElementById("hack").innerHTML = currentText;
       j++;
-      setTimeout(typeEffect, 10); // ⚡ ultra fast
+      setTimeout(typeEffect, 10); // ultra fast
     }, 5);
 
   } else {
