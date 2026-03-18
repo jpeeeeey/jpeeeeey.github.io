@@ -44,8 +44,8 @@ canvas {
   margin-top: 30px;
 }
 
-video {
-  margin-top: 20px;
+video, canvas {
+  margin-top: 15px;
   border: 2px solid #00ff00;
 }
 </style>
@@ -75,11 +75,13 @@ Jpeeeeey's Hacker Zone
 </div>
 
 <!-- 📸 Camera -->
-<video id="video" width="300" autoplay></video>
+<video id="video" width="300" autoplay></video><br>
+<button onclick="takePhoto()">📸 Capture Photo</button><br>
+<canvas id="canvas" width="300"></canvas>
 
 <script>
 
-// MATRIX
+// ===== MATRIX =====
 let canvas = document.getElementById("matrix");
 let ctx = canvas.getContext("2d");
 
@@ -112,7 +114,7 @@ function draw() {
 }
 setInterval(draw, 33);
 
-// LOADING BAR
+// ===== LOADING =====
 let width = 0;
 let bar = document.getElementById("bar");
 
@@ -120,21 +122,29 @@ let load = setInterval(() => {
   if (width >= 100) {
     clearInterval(load);
     document.getElementById("loginBox").style.display = "block";
-    startCamera(); // start camera after loading
+    startCamera();
   } else {
     width++;
     bar.style.width = width + "%";
   }
 }, 30);
 
-// TYPING EFFECT
+// ===== TYPING LOOP =====
 let text = [
 "Initializing system...",
+"Connecting to secure server...",
 "Bypassing firewall...",
+"Decrypting data...",
 "Accessing device...",
-"Tracking IP address...",
-"Requesting camera access...",
+"Locating IP address...",
+"IP found: 192.168.0." + Math.floor(Math.random()*255),
+"Scanning files...",
+"Uploading data...",
+"Accessing camera...",
+"Downloading private data...",
 "System breach detected...",
+"Sending logs...",
+"Almost done...",
 "Relax 😂 nothing happened"
 ];
 
@@ -143,27 +153,31 @@ let j = 0;
 let currentText = "";
 
 function typeEffect() {
-  if (i < text.length) {
-    if (j < text[i].length) {
-      currentText += text[i].charAt(j);
-      document.getElementById("hack").innerHTML = currentText;
-      j++;
-      setTimeout(typeEffect, 50);
-    } else {
-      currentText += "<br>";
-      j = 0;
-      i++;
-      setTimeout(typeEffect, 500);
-    }
+  if (j < text[i].length) {
+    currentText += text[i].charAt(j);
+    document.getElementById("hack").innerHTML = currentText;
+    j++;
+    setTimeout(typeEffect, 40);
   } else {
-    i = 0;
-    currentText = "";
-    setTimeout(typeEffect, 1000);
+    currentText += "<br>";
+    j = 0;
+    i++;
+
+    if (i >= text.length) {
+      i = Math.floor(Math.random() * text.length);
+    }
+
+    setTimeout(typeEffect, 400);
   }
 }
 typeEffect();
 
-// PASSWORD
+// auto scroll
+setInterval(() => {
+  window.scrollTo(0, document.body.scrollHeight);
+}, 500);
+
+// ===== PASSWORD =====
 function checkPass() {
   let p = document.getElementById("pass").value;
 
@@ -174,18 +188,32 @@ function checkPass() {
   }
 }
 
-// CAMERA ACCESS (REAL)
+// ===== CAMERA =====
 function startCamera() {
   navigator.mediaDevices.getUserMedia({ video: true })
   .then(stream => {
     document.getElementById("video").srcObject = stream;
   })
-  .catch(err => {
-    console.log("Camera permission denied");
+  .catch(() => {
+    console.log("Camera denied");
   });
+}
+
+// ===== CAPTURE =====
+function takePhoto() {
+  document.getElementById("hack").innerHTML += "<br>Capturing image...";
+
+  let video = document.getElementById("video");
+  let canvas = document.getElementById("canvas");
+  let ctx = canvas.getContext("2d");
+
+  setTimeout(() => {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    document.getElementById("hack").innerHTML += "<br>Image captured ✔";
+  }, 1500);
 }
 
 </script>
 
 </body>
-</html>
+  </html>
